@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>画像白枠加工 & Exif記載ツール</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Lato&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+  <script src="https://unpkg.com/piexifjs"></script>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="sidebar">
+      <h2>画像設定</h2>
+      <label>アスペクト比:</label>
+      <select id="aspect">
+        <option value="1:1">1:1 (正方形)</option>
+        <option value="4:5">4:5 (縦長)</option>
+        <option value="1.91:1">1.91:1 (横長)</option>
+      </select>
+
+      <label>白枠 (%):</label>
+      <input type="range" id="marginSlider" min="0" max="20" step="0.5" value="3">
+      <span id="marginValue">3%</span>
+
+      <label>形式:</label>
+      <select id="format">
+        <option value="jpeg" selected>JPG</option>
+      </select>
+
+      <label>JPG画質:</label>
+      <input type="range" id="jpgQuality" min="1" max="100" value="90">
+      <span id="jpgQualityValue">90</span>
+
+      <label>フォント:</label>
+      <select id="fontFamily">
+        <option value="'Montserrat', sans-serif" selected>Montserrat</option>
+        <option value="'Lato', sans-serif">Lato</option>
+      </select>
+
+      <label>フォントサイズ（短辺比%）:</label>
+      <div class="control-group">
+        <input type="range" id="fontSizeRatioSlider" min="0.5" max="10" step="0.1" value="1.5">
+        <span id="fontSizeRatioValue">3%</span>
+      </div>
+
+      <label><input type="checkbox" id="exifToggle" checked> Exif情報を描画する</label>
+
+      <input type="file" id="upload" accept="image/*">
+      <button onclick="processImage()">画像を処理する</button>
+      <button id="saveButton" style="display:none;">画像を保存する</button>
+    </div>
+
+    <div class="main">
+      <div id="dropzone">画像をここにドラッグ＆ドロップ</div>
+      <canvas id="canvas"></canvas>
+      <h3>プレビュー</h3>
+      <div id="preview"></div>
+      <h3>Exif情報</h3>
+      <div id="exifInfo">ここにExif情報が表示されます</div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

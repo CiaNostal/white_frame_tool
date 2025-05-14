@@ -1,0 +1,68 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  padding: 20px;
+}
+
+.sidebar {
+  flex: 0 0 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar label {
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.sidebar input,
+.sidebar select,
+.sidebar button {
+  font-size: 14px;
+  padding: 4px;
+}
+
+.main {
+  display: inline-block;
+  width: auto;
+}
+
+#dropzone {
+  border: 2px dashed gray;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+#preview {
+  border: 2px solid black;
+  background: #f8f8f8;
+  max-width: 100%;
+}
+
+#preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+#exifInfo {
+  background: #f4f4f4;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  white-space: pre-line;
+}
+
+canvas {
+  display: none;
+}
