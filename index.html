@@ -26,14 +26,12 @@
       <input type="range" id="marginSlider" min="0" max="20" step="0.5" value="3">
       <span id="marginValue">3%</span>
 
-      <label>形式:</label>
+      <!-- <label>形式:</label>
       <select id="format">
         <option value="jpeg" selected>JPG</option>
-      </select>
+      </select> -->
 
-      <label>JPG画質:</label>
-      <input type="range" id="jpgQuality" min="1" max="100" value="90">
-      <span id="jpgQualityValue">90</span>
+      <label><input type="checkbox" id="exifToggle" checked> Exif情報を描画する</label>
 
       <label>フォント:</label>
       <select id="fontFamily">
@@ -47,15 +45,18 @@
         <span id="fontSizeRatioValue">1.5%</span>
       </div>
 
-      <label><input type="checkbox" id="exifToggle" checked> Exif情報を描画する</label>
+      <label>JPG画質:</label>
+      <input type="range" id="jpgQuality" min="1" max="100" value="90">
+      <span id="jpgQualityValue">90</span>
 
-      <input type="file" id="upload" accept="image/*">
+      
       <button onclick="processImage()">画像を処理する</button>
       <button id="saveButton" style="display:none;">画像を保存する</button>
     </div>
 
     <div class="main">
-      <div id="dropzone">画像をここにドラッグ＆ドロップ</div>
+      <input type="file" id="upload" accept="image/*">
+      <div id="dropzone">もしくは、画像をここにドラッグ＆ドロップ</div>
       <canvas id="canvas"></canvas>
       <h3>プレビュー</h3>
       <div id="preview"></div>
