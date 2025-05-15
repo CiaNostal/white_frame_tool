@@ -15,11 +15,23 @@ const drawExifToggle = document.getElementById('drawExifToggle');
 const drawDateToggle = document.getElementById('drawDateToggle');
 const fontSizeRatioSlider = document.getElementById('fontSizeRatioSlider');
 const fontSizeRatioValue = document.getElementById('fontSizeRatioValue');
+const textMarginLeft = document.getElementById("textMarginLeft");
+const textMarginRight = document.getElementById("textMarginRight");
+const textMarginBottom = document.getElementById("textMarginBottom");
+
+const textMarginLeftValue = document.getElementById("textMarginLeftValue");
+const textMarginRightValue = document.getElementById("textMarginRightValue");
+const textMarginBottomValue = document.getElementById("textMarginBottomValue");
 
 // スライダー動かしたら表示も更新
 fontSizeRatioSlider.oninput = () => {
   fontSizeRatioValue.textContent = fontSizeRatioSlider.value + "%";
 };
+
+textMarginLeft.oninput = () => textMarginLeftValue.textContent = textMarginLeft.value + "%";
+textMarginRight.oninput = () => textMarginRightValue.textContent = textMarginRight.value + "%";
+textMarginBottom.oninput = () => textMarginBottomValue.textContent = textMarginBottom.value + "%";
+
 
 let originalImage = null;
 let exifData = {};
@@ -47,6 +59,9 @@ function parseAspect(value) {
 
 function drawExif(ctx, w, h, data) {
   const shorterSide = Math.min(w, h);
+  const marginLeft = shorterSide * (parseFloat(textMarginLeft.value) / 100);
+  const marginRight = shorterSide * (parseFloat(textMarginRight.value) / 100);
+  const marginBottom = shorterSide * (parseFloat(textMarginBottom.value) / 100);
   const fontSizeRatio = parseFloat(fontSizeRatioSlider.value) / 100;
   const fontSize = Math.round(shorterSide * fontSizeRatio);
   const font = fontFamilySelect.value;
@@ -55,7 +70,7 @@ function drawExif(ctx, w, h, data) {
   ctx.fillStyle = fontColor;
   ctx.textBaseline = "bottom";
 
-  const padding = 10;
+  // const padding = 10;
 
   // Exif情報（右下）
   if (drawExifToggle.checked) {
@@ -70,8 +85,10 @@ function drawExif(ctx, w, h, data) {
 
     const exifLine = parts.join(" ・ ");
     const exifW = ctx.measureText(exifLine).width;
-    const exifX = w - exifW - padding;
-    ctx.fillText(exifLine, exifX - fontSize, h - fontSize - padding);
+
+    const x = w - exifW - marginRight;
+    const y = h - marginBottom;
+    ctx.fillText(exifLine, x, y);
   }
 
   // 撮影日（左下）
@@ -83,7 +100,9 @@ function drawExif(ctx, w, h, data) {
         const separator = document.getElementById('dateSeparator')?.value || "/";
         dateStr = [match[1], match[2], match[3]].join(separator);
       }
-      ctx.fillText(dateStr, padding + fontSize, h - fontSize - padding);
+      const x = marginLeft;
+      const y = h - marginBottom;
+      ctx.fillText(dateStr, x, y);
     }
   }
 }
@@ -239,3 +258,18 @@ async function processImage() {
 
   saveButton.style.display = "inline-block";
 }
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".swatch").forEach(swatch => {
+    swatch.addEventListener("click", () => {
+      const color = swatch.getAttribute("data-color");
+      const targetId = swatch.getAttribute("data-target");
+      const targetInput = document.getElementById(targetId);
+      if (targetInput) {
+        targetInput.value = color;
+        targetInput.dispatchEvent(new Event("input"));
+      }
+    });
+  });
+});

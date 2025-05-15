@@ -10,8 +10,6 @@ body {
   padding: 20px;
 }
 
-
-
 .sidebar {
   flex: 0 0 280px;
   display: flex;
@@ -72,4 +70,38 @@ body {
 
 canvas {
   display: none;
+}
+
+.color-swatches {
+  margin-top: 5px;
+  display: flex;
+  gap: 6px;
+}
+
+.swatch {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.swatch:hover {
+  outline: 2px solid #555;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.control-group input[type="range"] {
+  width: 180px;  /* ← スライダー幅を固定（お好みで調整） */
+}
+
+.control-group span {
+  display: inline-block;
+  width: 40px;     /* ← 数字欄の幅を固定（"10.0%"も入る） */
+  text-align: right;
+  white-space: nowrap;
 }

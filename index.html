@@ -31,6 +31,12 @@
 
       <label>枠の色:</label>
       <input type="color" id="frameColor" class="color-picker" value="#ffffff">
+      <div class="color-swatches">
+        <span class="swatch" data-color="#ffffff" data-target="frameColor" style="background:#ffffff;"></span>
+        <span class="swatch" data-color="#000000" data-target="frameColor" style="background:#000000;"></span>
+        <span class="swatch" data-color="#FFF9EE" data-target="frameColor" style="background:#FFF9EE;"></span>
+      </div>
+
 
 
       <label><input type="checkbox" id="drawExifToggle" checked> Exif情報を描画する（右下）</label>
@@ -61,12 +67,37 @@
 
       <label>文字の色:</label>
       <input type="color" id="fontColor" class="color-picker" value="#000000">
+      <div class="color-swatches">
+        <span class="swatch" data-color="#000000" data-target="fontColor" style="background:#000000;"></span>
+        <span class="swatch" data-color="#ffffff" data-target="fontColor" style="background:#ffffff;"></span>
+        <span class="swatch" data-color="#FFF9EE" data-target="fontColor" style="background:#FFF9EE;"></span>
+      </div>
+
 
       <label>フォントサイズ（短辺比%）:</label>
       <div class="control-group">
         <input type="range" id="fontSizeRatioSlider" min="0.5" max="10" step="0.1" value="1.5">
         <span id="fontSizeRatioValue">1.5%</span>
       </div>
+
+      <label>文字余白：左（%）</label>
+      <div class="control-group">
+        <input type="range" id="textMarginLeft" min="0" max="10" step="0.1" value="1.5">
+        <span id="textMarginLeftValue">1.5%</span>
+      </div>
+
+      <label>文字余白：右（%）</label>
+      <div class="control-group">
+        <input type="range" id="textMarginRight" min="0" max="10" step="0.1" value="1.5">
+        <span id="textMarginRightValue">1.5%</span>
+      </div>
+
+      <label>文字余白：下（%）</label>
+      <div class="control-group">
+        <input type="range" id="textMarginBottom" min="0" max="10" step="0.1" value="1.5">
+        <span id="textMarginBottomValue">1.5%</span>
+      </div>
+
 
       <label>JPG画質:</label>
       <div class="control-group">
