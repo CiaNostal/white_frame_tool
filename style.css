@@ -10,6 +10,8 @@ body {
   padding: 20px;
 }
 
+
+
 .sidebar {
   flex: 0 0 280px;
   display: flex;
@@ -27,6 +29,11 @@ body {
 .sidebar button {
   font-size: 14px;
   padding: 4px;
+}
+
+.color-picker {
+  zoom: 1.5;
+  cursor: pointer;
 }
 
 .main {

@@ -11,7 +11,8 @@ const fontSizeInput = document.getElementById('fontSize');
 const fontFamilySelect = document.getElementById('fontFamily');
 const exifInfo = document.getElementById('exifInfo');
 const saveButton = document.getElementById('saveButton');
-const exifToggle = document.getElementById('exifToggle');
+const drawExifToggle = document.getElementById('drawExifToggle');
+const drawDateToggle = document.getElementById('drawDateToggle');
 const fontSizeRatioSlider = document.getElementById('fontSizeRatioSlider');
 const fontSizeRatioValue = document.getElementById('fontSizeRatioValue');
 
@@ -45,33 +46,46 @@ function parseAspect(value) {
 }
 
 function drawExif(ctx, w, h, data) {
-  if (!exifToggle.checked) return;
-
   const shorterSide = Math.min(w, h);
   const fontSizeRatio = parseFloat(fontSizeRatioSlider.value) / 100;
   const fontSize = Math.round(shorterSide * fontSizeRatio);
   const font = fontFamilySelect.value;
+  const fontColor = document.getElementById("fontColor")?.value || "#000000";
   ctx.font = `${fontSize}px ${font}`;
-  ctx.fillStyle = "black";
+  ctx.fillStyle = fontColor;
   ctx.textBaseline = "bottom";
 
   const padding = 10;
 
   // Exif情報（右下）
-  const exifLine = `${data.camera || "?"} ・ ƒ/${data.fnum || "?"} ・ ${formatShutterSpeed(data.ss)}s ・ ISO ${data.iso || "?"} ・ ${data.focal || "?"}mm`;
-  const exifW = ctx.measureText(exifLine).width;
-  const exifX = w - exifW - padding;
-  ctx.fillText(exifLine, exifX - fontSize, h - fontSize - padding);
+  if (drawExifToggle.checked) {
+    const parts = [];
+
+    if (document.getElementById('showMake')?.checked) parts.push(data.make || "?");
+    if (document.getElementById('showModel')?.checked) parts.push(data.model || "?");
+    if (document.getElementById('showFnum')?.checked) parts.push(`f/${data.fnum || "?"}`);
+    if (document.getElementById('showSS')?.checked) parts.push(`${formatShutterSpeed(data.ss)}s`);
+    if (document.getElementById('showISO')?.checked) parts.push(`ISO ${data.iso || "?"}`);
+    if (document.getElementById('showFocal')?.checked) parts.push(`${data.focal || "?"}mm`);
+
+    const exifLine = parts.join(" ・ ");
+    const exifW = ctx.measureText(exifLine).width;
+    const exifX = w - exifW - padding;
+    ctx.fillText(exifLine, exifX - fontSize, h - fontSize - padding);
+  }
 
   // 撮影日（左下）
-  let dateStr = "----/--/--";
-  if (data.dateTimeOriginal && typeof data.dateTimeOriginal === "string") {
-    const match = data.dateTimeOriginal.match(/(\d{4}):(\d{2}):(\d{2})/);
-    if (match) {
-      dateStr = `${match[1]}/${match[2]}/${match[3]}`;
+  if (drawDateToggle.checked) {
+    if (data.dateTimeOriginal && typeof data.dateTimeOriginal === "string") {
+      let dateStr = "----/--/--";
+      const match = data.dateTimeOriginal.match(/(\d{4}):(\d{2}):(\d{2})/);
+      if (match) {
+        const separator = document.getElementById('dateSeparator')?.value || "/";
+        dateStr = [match[1], match[2], match[3]].join(separator);
+      }
+      ctx.fillText(dateStr, padding + fontSize, h - fontSize - padding);
     }
   }
-  ctx.fillText(dateStr, padding + fontSize, h - fontSize - padding);
 }
 
 function handleFile(file) {
@@ -85,19 +99,32 @@ function handleFile(file) {
     const iso = EXIF.getTag(this, "ISOSpeedRatings");
     const focal = EXIF.getTag(this, "FocalLength");
     const dtOrig = EXIF.getTag(this, "DateTimeOriginal");
+
     exifData = {
-      make: make,
-      model: model,
-      camera: `${make} ${model}`.trim(),
-      fnum: fnum,
-      ss: ssRaw,
-      iso: iso,
-      focal: focal,
-      dateTimeOriginal: dtOrig
+      make, model, fnum, ss: ssRaw, iso, focal, dateTimeOriginal: dtOrig
     };
-    exifInfo.textContent = `📷 Camera: ${exifData.camera}
-ƒ/${exifData.fnum || "?"} ・ ${formatShutterSpeed(exifData.ss)}s ・ ISO ${exifData.iso} ・ ${exifData.focal || "?"}mm`;
+    exifData.camera = `${make} ${model}`.trim();
+
+    const ssFormatted = formatShutterSpeed(ssRaw);
+    const dateFormatted = (dtOrig && typeof dtOrig === "string" && dtOrig.match(/(\d{4}):(\d{2}):(\d{2})/))
+      ? dtOrig.replace(/:/g, "/").split(" ")[0]
+      : "?";
+
+
+    const tableHTML = `
+    <table>
+      <tr><th>メーカー名</th><td>${make || "?"}</td></tr>
+      <tr><th>機種名</th><td>${model || "?"}</td></tr>
+      <tr><th>F値</th><td>${fnum || "?"}</td></tr>
+      <tr><th>シャッタースピード</th><td>${ssFormatted}</td></tr>
+      <tr><th>ISO感度</th><td>${iso || "?"}</td></tr>
+      <tr><th>焦点距離</th><td>${focal || "?"}mm</td></tr>
+      <tr><th>撮影日時</th><td>${dateFormatted}</td></tr>
+    </table>
+  `;
+    exifInfo.innerHTML = tableHTML;
   });
+
 
   const reader = new FileReader();
   reader.onload = e => {
@@ -110,14 +137,6 @@ function handleFile(file) {
       // ✅ 白枠サイズをスライダーUIに反映
       marginSlider.value = marginRatio * 100;
       marginValue.textContent = marginSlider.value + "%";
-
-      // 短辺を取得して、白枠込みサイズを計算
-      // const shorterSide = Math.min(img.width, img.height);
-      // const totalShortSide = shorterSide * (1 + 2 * marginRatio);
-
-      // // フォントサイズを設定
-      // const fontSize = Math.round(totalShortSide * FONT_SIZE_RATIO);
-      // fontSizeInput.value = fontSize;
 
       preview.innerHTML = "";
       const imgTag = document.createElement("img");
@@ -145,8 +164,8 @@ document.getElementById('upload').addEventListener('change', e => {
 async function processImage() {
   if (!originalImage) return alert("画像を先に選択してください");
 
-  // const fontSize = fontSizeInput.value;
   const fontFamily = fontFamilySelect.value;
+  const frameColor = document.getElementById("frameColor").value;
 
   await document.fonts.load(`10px ${fontFamily}`);
   await document.fonts.ready;
@@ -166,7 +185,8 @@ async function processImage() {
 
   baseCanvas.width = canvas.width = cw;
   baseCanvas.height = canvas.height = ch;
-  baseCtx.fillStyle = ctx.fillStyle = "white";
+  baseCtx.fillStyle = frameColor;
+  ctx.fillStyle = frameColor;
   baseCtx.fillRect(0, 0, cw, ch);
   baseCtx.drawImage(originalImage, (cw - iw) / 2, (ch - ih) / 2);
   ctx.drawImage(baseCanvas, 0, 0);

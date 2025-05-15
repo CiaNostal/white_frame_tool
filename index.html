@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <title>画像白枠加工 & Exif記載ツール</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Lato&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Lato&family=Cal+Sans&display=swap"
+    rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
   <script src="https://unpkg.com/piexifjs"></script>
 </head>
@@ -22,22 +23,44 @@
         <option value="1.91:1">1.91:1 (横長)</option>
       </select>
 
-      <label>白枠 (%):</label>
-      <input type="range" id="marginSlider" min="0" max="20" step="0.5" value="3">
-      <span id="marginValue">3%</span>
+      <label>枠の大きさ (%):</label>
+      <div class="control-group">
+        <input type="range" id="marginSlider" min="0" max="20" step="0.5" value="3">
+        <span id="marginValue">3%</span>
+      </div>
 
-      <!-- <label>形式:</label>
-      <select id="format">
-        <option value="jpeg" selected>JPG</option>
-      </select> -->
+      <label>枠の色:</label>
+      <input type="color" id="frameColor" class="color-picker" value="#ffffff">
 
-      <label><input type="checkbox" id="exifToggle" checked> Exif情報を描画する</label>
+
+      <label><input type="checkbox" id="drawExifToggle" checked> Exif情報を描画する（右下）</label>
+      <fieldset>
+        <legend>Exif表示項目の選択</legend>
+        <label><input type="checkbox" id="showMake" checked> メーカー名</label><br>
+        <label><input type="checkbox" id="showModel" checked> 機種名</label><br>
+        <label><input type="checkbox" id="showFnum" checked> F値</label><br>
+        <label><input type="checkbox" id="showSS" checked> シャッタースピード</label><br>
+        <label><input type="checkbox" id="showISO" checked> ISO感度</label><br>
+        <label><input type="checkbox" id="showFocal" checked> 焦点距離</label><br>
+      </fieldset>
+
+      <label><input type="checkbox" id="drawDateToggle" checked> 撮影日を描画する（左下）</label>
+      <label>日付の区切り:</label>
+      <select id="dateSeparator">
+        <option value="/">YYYY/MM/DD</option>
+        <option value=".">YYYY.MM.DD</option>
+      </select>
+
 
       <label>フォント:</label>
       <select id="fontFamily">
         <option value="'Montserrat', sans-serif" selected>Montserrat</option>
         <option value="'Lato', sans-serif">Lato</option>
+        <option value="'Cal Sans', sans-serif">Cal Sans</option>
       </select>
+
+      <label>文字の色:</label>
+      <input type="color" id="fontColor" class="color-picker" value="#000000">
 
       <label>フォントサイズ（短辺比%）:</label>
       <div class="control-group">
@@ -46,10 +69,11 @@
       </div>
 
       <label>JPG画質:</label>
-      <input type="range" id="jpgQuality" min="1" max="100" value="90">
-      <span id="jpgQualityValue">90</span>
+      <div class="control-group">
+        <input type="range" id="jpgQuality" min="1" max="100" value="100">
+        <span id="jpgQualityValue">100</span>
+      </div>
 
-      
       <button onclick="processImage()">画像を処理する</button>
       <button id="saveButton" style="display:none;">画像を保存する</button>
     </div>
