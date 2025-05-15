@@ -29,15 +29,52 @@
         <span id="marginValue">3%</span>
       </div>
 
-      <label>枠の色:</label>
-      <input type="color" id="frameColor" class="color-picker" value="#ffffff">
-      <div class="color-swatches">
-        <span class="swatch" data-color="#ffffff" data-target="frameColor" style="background:#ffffff;"></span>
-        <span class="swatch" data-color="#000000" data-target="frameColor" style="background:#000000;"></span>
-        <span class="swatch" data-color="#FFF9EE" data-target="frameColor" style="background:#FFF9EE;"></span>
-      </div>
+      <h3>背景設定</h3>
+      <label><input type="checkbox" id="useBlurredBackground" checked> 拡大ぼかし背景を使う</label>
 
 
+
+      <fieldset>
+        <div id="frameColorSetting">
+          <label>枠の色:</label>
+          <input type="color" id="frameColor" class="color-picker" value="#ffffff">
+          <div class="color-swatches">
+            <span class="swatch" data-color="#ffffff" data-target="frameColor" style="background:#ffffff;"></span>
+            <span class="swatch" data-color="#000000" data-target="frameColor" style="background:#000000;"></span>
+            <span class="swatch" data-color="#FFF9EE" data-target="frameColor" style="background:#FFF9EE;"></span>
+          </div>
+        </div>
+
+
+        <div id="blurSettings">
+          <label>拡大倍率:</label>
+          <div class="control-group">
+            <input type="range" id="backgroundScale" min="1.0" max="4.0" step="0.1" value="2.0">
+            <span id="backgroundScaleValue">2.0</span>
+          </div>
+
+          <label>ぼかしの強さ (% 短辺基準):</label>
+          <div class="control-group">
+            <input type="range" id="blurAmount" min="0" max="15" step="0.1" value="3">
+            <span id="blurAmountValue">3%</span>
+          </div>
+
+
+          <label>背景の明るさ (%):</label>
+          <div class="control-group">
+            <input type="range" id="backgroundBrightness" min="0" max="300" step="5" value="100">
+            <span id="backgroundBrightnessValue">100%</span>
+          </div>
+
+
+          <label>背景の彩度 (%):</label>
+          <div class="control-group">
+            <input type="range" id="backgroundSaturation" min="0" max="300" step="5" value="100">
+            <span id="backgroundSaturationValue">100%</span>
+          </div>
+
+        </div>
+      </fieldset>
 
       <label><input type="checkbox" id="drawExifToggle" checked> Exif情報を描画する（右下）</label>
       <fieldset>
@@ -56,7 +93,6 @@
         <option value=".">YYYY.MM.DD</option>
         <option value="/">YYYY/MM/DD</option>
       </select>
-
 
       <label>フォント:</label>
       <select id="fontFamily">

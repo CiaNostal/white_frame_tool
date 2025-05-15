@@ -18,10 +18,16 @@ const fontSizeRatioValue = document.getElementById('fontSizeRatioValue');
 const textMarginLeft = document.getElementById("textMarginLeft");
 const textMarginRight = document.getElementById("textMarginRight");
 const textMarginBottom = document.getElementById("textMarginBottom");
-
 const textMarginLeftValue = document.getElementById("textMarginLeftValue");
 const textMarginRightValue = document.getElementById("textMarginRightValue");
 const textMarginBottomValue = document.getElementById("textMarginBottomValue");
+const useBlurredBackground = document.getElementById("useBlurredBackground");
+const blurSettings = document.getElementById("blurSettings");
+const frameColorSetting = document.getElementById("frameColorSetting");
+const backgroundScale = document.getElementById("backgroundScale");
+const blurAmount = document.getElementById("blurAmount");
+const backgroundBrightness = document.getElementById("backgroundBrightness");
+const backgroundSaturation = document.getElementById("backgroundSaturation");
 
 // スライダー動かしたら表示も更新
 fontSizeRatioSlider.oninput = () => {
@@ -32,6 +38,24 @@ textMarginLeft.oninput = () => textMarginLeftValue.textContent = textMarginLeft.
 textMarginRight.oninput = () => textMarginRightValue.textContent = textMarginRight.value + "%";
 textMarginBottom.oninput = () => textMarginBottomValue.textContent = textMarginBottom.value + "%";
 
+backgroundScale.oninput = () =>
+  document.getElementById("backgroundScaleValue").textContent = backgroundScale.value;
+blurAmount.oninput = () =>
+  document.getElementById("blurAmountValue").textContent = blurAmount.value + "%";
+backgroundBrightness.oninput = () =>
+  document.getElementById("backgroundBrightnessValue").textContent = backgroundBrightness.value + "%";
+backgroundSaturation.oninput = () =>
+  document.getElementById("backgroundSaturationValue").textContent = backgroundSaturation.value + "%";
+
+useBlurredBackground.onchange = () => {
+  const show = useBlurredBackground.checked;
+  blurSettings.style.display = show ? "block" : "none";
+  frameColorSetting.style.display = show ? "none" : "block";
+};
+
+window.addEventListener("DOMContentLoaded", () => {
+  useBlurredBackground.onchange();
+});
 
 let originalImage = null;
 let exifData = {};
@@ -204,10 +228,43 @@ async function processImage() {
 
   baseCanvas.width = canvas.width = cw;
   baseCanvas.height = canvas.height = ch;
-  baseCtx.fillStyle = frameColor;
-  ctx.fillStyle = frameColor;
-  baseCtx.fillRect(0, 0, cw, ch);
+
+  const useBlurredBackground = document.getElementById("useBlurredBackground").checked;
+
+  if (useBlurredBackground) {
+    // ✅ 拡大ぼかし背景処理
+    const scale = parseFloat(document.getElementById("backgroundScale").value);
+    const blurPercent = parseFloat(document.getElementById("blurAmount").value);
+    const shorterSide = Math.min(cw, ch); // 背景画像を貼るキャンバスの短辺
+    const blur = shorterSide * (blurPercent / 100);
+    const brightness = parseInt(document.getElementById("backgroundBrightness").value);
+    const saturation = parseInt(document.getElementById("backgroundSaturation").value);
+
+    const offCanvas = document.createElement("canvas");
+    offCanvas.width = cw;
+    offCanvas.height = ch;
+    const offCtx = offCanvas.getContext("2d");
+
+    offCtx.filter = `blur(${blur}px) brightness(${brightness}%) saturate(${saturation}%)`;
+
+    const bgWidth = iw * scale;
+    const bgHeight = ih * scale;
+    const bgX = (cw - bgWidth) / 2;
+    const bgY = (ch - bgHeight) / 2;
+
+    offCtx.drawImage(originalImage, bgX, bgY, bgWidth, bgHeight);
+
+    // 背景として貼り付け
+    baseCtx.drawImage(offCanvas, 0, 0);
+  } else {
+    // ✅ 通常の枠色背景
+    baseCtx.fillStyle = frameColor;
+    baseCtx.fillRect(0, 0, cw, ch);
+  }
+
+  // ✅ 前景画像を中央に配置
   baseCtx.drawImage(originalImage, (cw - iw) / 2, (ch - ih) / 2);
+
   ctx.drawImage(baseCanvas, 0, 0);
   drawExif(ctx, cw, ch, exifData);
 
@@ -258,6 +315,7 @@ async function processImage() {
 
   saveButton.style.display = "inline-block";
 }
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
